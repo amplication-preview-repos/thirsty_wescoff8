@@ -1,0 +1,53 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model House {
+  address           String?
+  createdAt         DateTime         @default(now())
+  id                String           @id @default(cuid())
+  keys              Key[]
+  listedAt          DateTime?
+  price             Float?
+  realEstateAgent   RealEstateAgent? @relation(fields: [realEstateAgentId], references: [id])
+  realEstateAgentId String?
+  updatedAt         DateTime         @updatedAt
+}
+
+model RealEstateAgent {
+  createdAt   DateTime @default(now())
+  email       String?
+  houses      House[]
+  id          String   @id @default(cuid())
+  name        String?
+  phoneNumber String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Client {
+  createdAt   DateTime @default(now())
+  email       String?
+  id          String   @id @default(cuid())
+  keys        Key[]
+  name        String?
+  phoneNumber String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Key {
+  client    Client?   @relation(fields: [clientId], references: [id])
+  clientId  String?
+  createdAt DateTime  @default(now())
+  house     House?    @relation(fields: [houseId], references: [id])
+  houseId   String?
+  id        String    @id @default(cuid())
+  isActive  Boolean?
+  issuedAt  DateTime?
+  label     String?
+  updatedAt DateTime  @updatedAt
+}
